@@ -1,0 +1,28 @@
+// src/pages/HomePage.jsx
+import { Link } from 'react-router-dom';
+
+
+export default function HomePage() {
+  return (
+    <div className="max-w-4xl mx-auto text-center py-16 px-4">
+      <h1 className="text-4xl font-bold mb-4 text-blue-700">Welcome to Bharat Tech League</h1>
+      <p className="mb-8 text-lg text-gray-700">
+        Join the biggest tech event of the year! Register your school and teams to showcase your skills and compete with the best.
+      </p>
+      <img 
+        src="/event-poster.png" 
+        alt="Bharat Tech League Event Poster" 
+        className="mx-auto mb-8 rounded-lg shadow-lg max-w-full h-auto"
+      />
+      <div className="flex justify-center gap-6">
+        <Link to="/school-registration" className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition">
+          Register Your School
+        </Link>
+        <Link to="/team-registration" className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition">
+          Register Your Team
+        </Link>
+      </div>
+    </div>
+    
+  );
+}
