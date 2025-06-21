@@ -140,7 +140,7 @@ const Dashboard = () => {
       key: 'email',
       width: 180,
       render: (email) => (
-        <Tooltip title={email}>
+        <Tooltip >
           <Text copyable={{ text: email }}>{email}</Text>
         </Tooltip>
       )
@@ -151,7 +151,7 @@ const Dashboard = () => {
       key: 'contact',
       width: 140,
       render: (contact) => (
-        <Tooltip title={contact}>
+        <Tooltip >
           <Text copyable={{ text: contact }}>{contact}</Text>
         </Tooltip>
       )
@@ -168,7 +168,7 @@ const Dashboard = () => {
       key: 'coordinatorContact',
       width: 150,
       render: (contact) => (
-        <Tooltip title={contact}>
+        <Tooltip >
           <Text copyable={{ text: contact }}>{contact}</Text>
         </Tooltip>
       )
@@ -274,7 +274,7 @@ const Dashboard = () => {
       key: 'teamLeaderContact',
       width: 150,
       render: (contact) => (
-        <Tooltip title={contact}>
+        <Tooltip>
           <Text copyable={{ text: contact }}>{contact}</Text>
         </Tooltip>
       )
@@ -291,7 +291,7 @@ const Dashboard = () => {
       key: 'coachContact',
       width: 140,
       render: (contact) => (
-        <Tooltip title={contact}>
+        <Tooltip>
           <Text copyable={{ text: contact }}>{contact}</Text>
         </Tooltip>
       )

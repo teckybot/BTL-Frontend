@@ -19,7 +19,7 @@ function App() {
         <Route path="/team-checkpoint" element={<CheckpointPage />} />
         <Route path="/register/:schoolRegId" element={<TeamRegistrationPage />} />
         <Route path="/registration-success" element={<RegistrationSuccess />} />
-        <Route path="/teamRegistration-success" element={<TeamRegistrationSuccess />}></Route>
+        <Route path="/teamRegistration-success" element={<TeamRegistrationSuccess />} />
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </>
