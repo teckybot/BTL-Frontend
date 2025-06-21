@@ -6,14 +6,14 @@ import { Link } from "react-router-dom";
 import confetti from "canvas-confetti";
 
 const TeamRegistrationSuccess = () => {
-  const teamId = sessionStorage.getItem("teamId");
+  const teamRegId = sessionStorage.getItem("teamRegId");
 
   const handleDownloadPDF = () => {
-    if (!teamId) {
+    if (!teamRegId) {
       alert("Missing Team ID. Please check your email.");
       return;
     }
-    const url = `${import.meta.env.VITE_API_BASE_URL}/team/pdf/${teamId}`;
+    const url = `${import.meta.env.VITE_API_BASE_URL}/team/pdf/${teamRegId}`;
     window.open(url, "_blank");
   };
 
@@ -55,7 +55,7 @@ const TeamRegistrationSuccess = () => {
             Your Team ID is:
           </p>
           <p className="text-blue-700 bg-blue-100 inline-block px-4 py-1 mt-1 rounded-md font-mono text-lg tracking-wide">
-            {teamId || 'N/A'}
+            {teamRegId || 'N/A'}
           </p>
         </div>
 

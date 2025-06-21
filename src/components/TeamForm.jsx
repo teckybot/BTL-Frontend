@@ -117,7 +117,7 @@ const TeamForm = ({ schoolRegId }) => {
     try {
       // Get all form values including nested fields
       const values = form.getFieldsValue(true);
-      console.log("✅ Raw form values:", values);
+      console.log("Raw form values:", values);
       console.log("Selected event:", selectedEvent);
 
       // Ensure event is properly set
@@ -138,13 +138,13 @@ const TeamForm = ({ schoolRegId }) => {
         event: eventValue,
       };
 
-      console.log("📦 Final payload to submit:", payload);
+      console.log("Final payload to submit:", payload);
 
       const response = await api.post("/team/register", payload);
 
       if (response.data.success) {
         // Save team ID to session storage
-        sessionStorage.setItem("teamId", response.data.teamId);
+        sessionStorage.setItem("teamRegId", response.data.teamRegId);
         
         // Clear form data
         sessionStorage.removeItem(STORAGE_KEY);
