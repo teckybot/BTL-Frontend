@@ -1,0 +1,300 @@
+// Mock data for the dashboard
+export const mockSchools = [
+  {
+    id: 'SCH001',
+    name: 'Delhi Public School',
+    email: 'dps@example.com',
+    contact: '+91-9876543210',
+    coordinatorName: 'Dr. Rajesh Kumar',
+    coordinatorContact: '+91-9876543211',
+    state: 'Telangana',
+    district: 'Hyderabad',
+    registrationDate: '2024-01-10',
+    status: 'Active'
+  },
+  {
+    id: 'SCH002',
+    name: 'St. Mary\'s Convent',
+    email: 'stmarys@example.com',
+    contact: '+91-9876543212',
+    coordinatorName: 'Mrs. Priya Sharma',
+    coordinatorContact: '+91-9876543213',
+    state: 'Andhra Pradesh',
+    district: 'Visakhapatnam',
+    registrationDate: '2024-01-12',
+    status: 'Active'
+  },
+  {
+    id: 'SCH003',
+    name: 'Kendriya Vidyalaya',
+    email: 'kv@example.com',
+    contact: '+91-9876543214',
+    coordinatorName: 'Mr. Amit Patel',
+    coordinatorContact: '+91-9876543215',
+    state: 'Karnataka',
+    district: 'Bengaluru Urban',
+    registrationDate: '2024-01-14',
+    status: 'Active'
+  },
+  {
+    id: 'SCH004',
+    name: 'Jawahar Navodaya Vidyalaya',
+    email: 'jnv@example.com',
+    contact: '+91-9876543216',
+    coordinatorName: 'Dr. Sunita Reddy',
+    coordinatorContact: '+91-9876543217',
+    state: 'Tamil Nadu',
+    district: 'Chennai',
+    registrationDate: '2024-01-15',
+    status: 'Active'
+  },
+  {
+    id: 'SCH005',
+    name: 'Army Public School',
+    email: 'aps@example.com',
+    contact: '+91-9876543218',
+    coordinatorName: 'Col. Ramesh Singh',
+    coordinatorContact: '+91-9876543219',
+    state: 'Himachal Pradesh',
+    district: 'Shimla',
+    registrationDate: '2024-01-16',
+    status: 'Active'
+  },
+  {
+    id: 'SCH006',
+    name: 'Sainik School',
+    email: 'sainik@example.com',
+    contact: '+91-9876543220',
+    coordinatorName: 'Maj. Vikram Singh',
+    coordinatorContact: '+91-9876543221',
+    state: 'Telangana',
+    district: 'Warangal',
+    registrationDate: '2024-01-17',
+    status: 'Active'
+  },
+  {
+    id: 'SCH007',
+    name: 'Central School',
+    email: 'central@example.com',
+    contact: '+91-9876543222',
+    coordinatorName: 'Mrs. Anjali Desai',
+    coordinatorContact: '+91-9876543223',
+    state: 'Andhra Pradesh',
+    district: 'Guntur',
+    registrationDate: '2024-01-18',
+    status: 'Active'
+  },
+  {
+    id: 'SCH008',
+    name: 'Model School',
+    email: 'model@example.com',
+    contact: '+91-9876543224',
+    coordinatorName: 'Mr. Suresh Kumar',
+    coordinatorContact: '+91-9876543225',
+    state: 'Karnataka',
+    district: 'Mysuru (Mysore)',
+    registrationDate: '2024-01-19',
+    status: 'Active'
+  }
+];
+
+export const mockTeams = [
+  {
+    id: 'TEAM001',
+    name: 'Tech Warriors',
+    schoolId: 'SCH001',
+    schoolName: 'Delhi Public School',
+    event: 'Robotics',
+    members: 4,
+    coachName: 'Mr. Tech Coach',
+    coachContact: '+91-9876543226',
+    state: 'Telangana',
+    district: 'Hyderabad',
+    registrationDate: '2024-01-15',
+    status: 'Active',
+    teamLeader: 'Rahul Kumar',
+    teamLeaderContact: '+91-9876543227'
+  },
+  {
+    id: 'TEAM002',
+    name: 'Innovation Squad',
+    schoolId: 'SCH002',
+    schoolName: 'St. Mary\'s Convent',
+    event: 'Science Project',
+    members: 3,
+    coachName: 'Mrs. Science Teacher',
+    coachContact: '+91-9876543228',
+    state: 'Andhra Pradesh',
+    district: 'Visakhapatnam',
+    registrationDate: '2024-01-16',
+    status: 'Active',
+    teamLeader: 'Priya Sharma',
+    teamLeaderContact: '+91-9876543229'
+  },
+  {
+    id: 'TEAM003',
+    name: 'Digital Dreamers',
+    schoolId: 'SCH003',
+    schoolName: 'Kendriya Vidyalaya',
+    event: 'Coding Competition',
+    members: 5,
+    coachName: 'Mr. Coding Mentor',
+    coachContact: '+91-9876543230',
+    state: 'Karnataka',
+    district: 'Bengaluru Urban',
+    registrationDate: '2024-01-17',
+    status: 'Active',
+    teamLeader: 'Amit Patel',
+    teamLeaderContact: '+91-9876543231'
+  },
+  {
+    id: 'TEAM004',
+    name: 'Future Engineers',
+    schoolId: 'SCH004',
+    schoolName: 'Jawahar Navodaya Vidyalaya',
+    event: 'Engineering Design',
+    members: 4,
+    coachName: 'Dr. Engineering Prof',
+    coachContact: '+91-9876543232',
+    state: 'Tamil Nadu',
+    district: 'Chennai',
+    registrationDate: '2024-01-18',
+    status: 'Active',
+    teamLeader: 'Sunita Reddy',
+    teamLeaderContact: '+91-9876543233'
+  },
+  {
+    id: 'TEAM005',
+    name: 'Mountain Coders',
+    schoolId: 'SCH005',
+    schoolName: 'Army Public School',
+    event: 'App Development',
+    members: 3,
+    coachName: 'Capt. App Developer',
+    coachContact: '+91-9876543234',
+    state: 'Himachal Pradesh',
+    district: 'Shimla',
+    registrationDate: '2024-01-19',
+    status: 'Active',
+    teamLeader: 'Ramesh Singh',
+    teamLeaderContact: '+91-9876543235'
+  },
+  {
+    id: 'TEAM006',
+    name: 'AI Pioneers',
+    schoolId: 'SCH001',
+    schoolName: 'Delhi Public School',
+    event: 'Artificial Intelligence',
+    members: 4,
+    coachName: 'Dr. AI Expert',
+    coachContact: '+91-9876543236',
+    state: 'Telangana',
+    district: 'Hyderabad',
+    registrationDate: '2024-01-20',
+    status: 'Active',
+    teamLeader: 'Neha Gupta',
+    teamLeaderContact: '+91-9876543237'
+  },
+  {
+    id: 'TEAM007',
+    name: 'Cyber Security Squad',
+    schoolId: 'SCH006',
+    schoolName: 'Sainik School',
+    event: 'Cybersecurity',
+    members: 3,
+    coachName: 'Capt. Cyber Expert',
+    coachContact: '+91-9876543238',
+    state: 'Telangana',
+    district: 'Warangal',
+    registrationDate: '2024-01-21',
+    status: 'Active',
+    teamLeader: 'Vikram Singh',
+    teamLeaderContact: '+91-9876543239'
+  },
+  {
+    id: 'TEAM008',
+    name: 'Data Scientists',
+    schoolId: 'SCH007',
+    schoolName: 'Central School',
+    event: 'Data Science',
+    members: 4,
+    coachName: 'Mrs. Data Analyst',
+    coachContact: '+91-9876543240',
+    state: 'Andhra Pradesh',
+    district: 'Guntur',
+    registrationDate: '2024-01-22',
+    status: 'Active',
+    teamLeader: 'Anjali Desai',
+    teamLeaderContact: '+91-9876543241'
+  },
+  {
+    id: 'TEAM009',
+    name: 'Web Wizards',
+    schoolId: 'SCH008',
+    schoolName: 'Model School',
+    event: 'Web Development',
+    members: 3,
+    coachName: 'Mr. Web Developer',
+    coachContact: '+91-9876543242',
+    state: 'Karnataka',
+    district: 'Mysuru (Mysore)',
+    registrationDate: '2024-01-23',
+    status: 'Active',
+    teamLeader: 'Suresh Kumar',
+    teamLeaderContact: '+91-9876543243'
+  },
+  {
+    id: 'TEAM010',
+    name: 'Game Developers',
+    schoolId: 'SCH002',
+    schoolName: 'St. Mary\'s Convent',
+    event: 'Game Development',
+    members: 5,
+    coachName: 'Mrs. Game Designer',
+    coachContact: '+91-9876543244',
+    state: 'Andhra Pradesh',
+    district: 'Visakhapatnam',
+    registrationDate: '2024-01-24',
+    status: 'Active',
+    teamLeader: 'Priya Sharma',
+    teamLeaderContact: '+91-9876543245'
+  }
+];
+
+// Available events for teams
+export const availableEvents = [
+  'Robotics',
+  'Science Project',
+  'Coding Competition',
+  'Engineering Design',
+  'App Development',
+  'Artificial Intelligence',
+  'Cybersecurity',
+  'Data Science',
+  'Web Development',
+  'Game Development',
+  'IoT Project',
+  'Machine Learning',
+  'Blockchain Development',
+  'Mobile App Development',
+  '3D Printing',
+  'Drone Technology'
+];
+
+// Team status options
+export const teamStatusOptions = [
+  'Active',
+  'Inactive',
+  'Pending',
+  'Disqualified',
+  'Winner',
+  'Runner-up'
+];
+
+// School status options
+export const schoolStatusOptions = [
+  'Active',
+  'Inactive',
+  'Pending',
+  'Suspended'
+]; 

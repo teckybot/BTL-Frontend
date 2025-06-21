@@ -7,6 +7,7 @@ import RegistrationSuccess from './pages/RegistrationSuccess';
 import CheckpointPage from './pages/CheckpointPage';
 import TeamRegistrationPage from './pages/TeamRegistrationPage';
 import TeamRegistrationSuccess from './pages/TeamRegistrationSuccess';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/register/:schoolRegId" element={<TeamRegistrationPage />} />
         <Route path="/registration-success" element={<RegistrationSuccess />} />
         <Route path="/teamRegistration-success" element={<TeamRegistrationSuccess />}></Route>
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </>
   );
