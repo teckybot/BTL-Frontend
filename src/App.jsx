@@ -11,6 +11,9 @@ import Dashboard from './pages/Dashboard';
 import CheckpointForm from './pages/OnlineSubmission/CheckpointForm';
 import StepperFormOnline from './pages/OnlineSubmission/StepperForm';
 import VideoConfirmation from './pages/VideoConfirmation';
+import QualifierCheckpointPage from './pages/Qualifier/CheckpointPage';
+import QualifierStepper from './pages/Qualifier/QualifierStepper';
+import QualifierSuccess from './pages/Qualifier/QualifierSuccess';
 
 function App() {
   return (
@@ -27,6 +30,9 @@ function App() {
         <Route path="/teamRegistration-success" element={<TeamRegistrationSuccess />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/video-confirmation" element={<VideoConfirmation />} />
+        <Route path="/qualifier" element={<QualifierCheckpointPage />} />
+        <Route path="/qualifier/:teamId/register" element={<QualifierStepper />} />
+        <Route path="/qualifier/:teamId/success" element={<QualifierSuccess />} />
       </Routes>
     </>
   );

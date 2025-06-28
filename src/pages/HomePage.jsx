@@ -21,6 +21,9 @@ export default function HomePage() {
         <Link to="/team-checkpoint" className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition">
           Register Your Team
         </Link>
+        <Link to="/qualifier" className="bg-purple-600 text-white px-6 py-3 rounded-md hover:bg-purple-700 transition">
+          Qualifier Registration
+        </Link>
       </div>
     </div>
     

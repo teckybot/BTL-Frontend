@@ -1,49 +1,94 @@
-import React, { useState, useMemo } from 'react';
-import { 
-  Table, 
-  Input, 
-  Select, 
-  Card, 
-  Statistic, 
-  Row, 
-  Col, 
-  Button, 
+import React, { useState, useEffect, useMemo } from 'react';
+import {
+  Table,
+  Input,
+  Select,
+  Card,
+  Statistic,
+  Row,
+  Col,
+  Button,
   Space,
   Switch,
   Typography,
   Tag,
   Tooltip,
-  Badge
+  Badge,
+  message,
+  Popconfirm
 } from 'antd';
-import { 
-  SearchOutlined, 
-  FilterOutlined, 
-  EyeOutlined, 
-  EditOutlined, 
+import {
+  SearchOutlined,
+  FilterOutlined,
+  EyeOutlined,
+  EditOutlined,
   DeleteOutlined,
   TeamOutlined,
   ReadOutlined,
-  TrophyOutlined
+  TrophyOutlined,
+  CheckCircleTwoTone
 } from '@ant-design/icons';
 import { stateDistrictCodeMap } from '../data/stateDistrictMap';
-import { 
-  mockSchools, 
-  mockTeams, 
-  availableEvents, 
-  teamStatusOptions, 
-  schoolStatusOptions 
-} from '../data/mockData';
+import { eventCodeMap } from '../data/mockData';
+import {
+  fetchSchools,
+  fetchSchoolStats,
+  fetchTeams,
+  fetchTeamStats,
+  qualifyTeam
+} from '../utils/api';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState('schools'); // 'schools' or 'teams'
+  const [activeTab, setActiveTab] = useState('schools');
   const [searchText, setSearchText] = useState('');
   const [selectedState, setSelectedState] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [selectedEvent, setSelectedEvent] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+  const [stats, setStats] = useState({ total: 0, active: 0, qualified: 0, filtered: 0 });
+
+  // Fetch data and stats
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const params = {
+        state: selectedState,
+        district: selectedDistrict,
+        event: activeTab === 'teams' ? selectedEvent : undefined,
+        status: activeTab === 'teams' ? selectedStatus : undefined,
+        search: searchText
+      };
+      if (activeTab === 'schools') {
+        const [listRes, statsRes] = await Promise.all([
+          fetchSchools(params),
+          fetchSchoolStats(params)
+        ]);
+        setData(listRes.data);
+        setStats(statsRes.data);
+      } else {
+        const [listRes, statsRes] = await Promise.all([
+          fetchTeams(params),
+          fetchTeamStats(params)
+        ]);
+        setData(listRes.data);
+        setStats(statsRes.data);
+      }
+    } catch (err) {
+      message.error('Failed to fetch data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line
+  }, [activeTab, searchText, selectedState, selectedDistrict, selectedEvent, selectedStatus]);
 
   // Get available districts based on selected state
   const availableDistricts = useMemo(() => {
@@ -53,105 +98,53 @@ const Dashboard = () => {
     return Object.keys(stateDistrictCodeMap[selectedState].districts);
   }, [selectedState]);
 
-  // Filter data based on search and filters
-  const filteredData = useMemo(() => {
-    let data = activeTab === 'schools' ? mockSchools : mockTeams;
-    
-    // Apply search filter
-    if (searchText) {
-      data = data.filter(item => {
-        if (activeTab === 'schools') {
-          return (
-            item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            item.email.toLowerCase().includes(searchText.toLowerCase()) ||
-            item.coordinatorName.toLowerCase().includes(searchText.toLowerCase()) ||
-            item.id.toLowerCase().includes(searchText.toLowerCase())
-          );
-        } else {
-          return (
-            item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            item.schoolName.toLowerCase().includes(searchText.toLowerCase()) ||
-            item.coachName.toLowerCase().includes(searchText.toLowerCase()) ||
-            item.teamLeader.toLowerCase().includes(searchText.toLowerCase()) ||
-            item.id.toLowerCase().includes(searchText.toLowerCase())
-          );
-        }
-      });
-    }
+  const handleStateChange = (value) => {
+    setSelectedState(value);
+    setSelectedDistrict('');
+  };
 
-    // Apply state filter
-    if (selectedState) {
-      data = data.filter(item => item.state === selectedState);
-    }
-
-    // Apply district filter
-    if (selectedDistrict) {
-      data = data.filter(item => item.district === selectedDistrict);
-    }
-
-    // Apply event filter (only for teams)
-    if (selectedEvent && activeTab === 'teams') {
-      data = data.filter(item => item.event === selectedEvent);
-    }
-
-    // Apply status filter
-    if (selectedStatus) {
-      data = data.filter(item => item.status === selectedStatus);
-    }
-
-    return data;
-  }, [activeTab, searchText, selectedState, selectedDistrict, selectedEvent, selectedStatus]);
-
-  // Calculate statistics
-  const statistics = useMemo(() => {
-    const totalSchools = mockSchools.length;
-    const totalTeams = mockTeams.length;
-    const activeSchools = mockSchools.filter(school => school.status === 'Active').length;
-    const activeTeams = mockTeams.filter(team => team.status === 'Active').length;
-    
-    return {
-      totalSchools,
-      totalTeams,
-      activeSchools,
-      activeTeams,
-      filteredCount: filteredData.length
-    };
-  }, [filteredData]);
+  const clearFilters = () => {
+    setSearchText('');
+    setSelectedState('');
+    setSelectedDistrict('');
+    setSelectedEvent('');
+    setSelectedStatus('');
+  };
 
   // School table columns
   const schoolColumns = [
     {
       title: 'Registration ID',
-      dataIndex: 'id',
-      key: 'id',
+      dataIndex: 'schoolRegId',
+      key: 'schoolRegId',
       width: 120,
       render: (id) => <Tag color="blue">{id}</Tag>
     },
     {
       title: 'School Name',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'schoolName',
+      key: 'schoolName',
       width: 200,
       render: (name) => <Text strong>{name}</Text>
     },
     {
       title: 'School Email',
-      dataIndex: 'email',
-      key: 'email',
+      dataIndex: 'schoolEmail',
+      key: 'schoolEmail',
       width: 180,
       render: (email) => (
-        <Tooltip >
+        <Tooltip>
           <Text copyable={{ text: email }}>{email}</Text>
         </Tooltip>
       )
     },
     {
       title: 'School Contact',
-      dataIndex: 'contact',
-      key: 'contact',
+      dataIndex: 'schoolContact',
+      key: 'schoolContact',
       width: 140,
       render: (contact) => (
-        <Tooltip >
+        <Tooltip>
           <Text copyable={{ text: contact }}>{contact}</Text>
         </Tooltip>
       )
@@ -164,11 +157,11 @@ const Dashboard = () => {
     },
     {
       title: 'Coordinator Contact',
-      dataIndex: 'coordinatorContact',
-      key: 'coordinatorContact',
+      dataIndex: 'coordinatorNumber',
+      key: 'coordinatorNumber',
       width: 150,
       render: (contact) => (
-        <Tooltip >
+        <Tooltip>
           <Text copyable={{ text: contact }}>{contact}</Text>
         </Tooltip>
       )
@@ -189,40 +182,10 @@ const Dashboard = () => {
     },
     {
       title: 'Registration Date',
-      dataIndex: 'registrationDate',
-      key: 'registrationDate',
-      width: 140
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      width: 100,
-      render: (status) => (
-        <Badge 
-          status={status === 'Active' ? 'success' : status === 'Pending' ? 'processing' : 'default'} 
-          text={status} 
-        />
-      )
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      width: 120,
-      fixed: 'right',
-      render: (_, record) => (
-        <Space>
-          <Tooltip title="View Details">
-            <Button type="text" icon={<EyeOutlined />} size="small" />
-          </Tooltip>
-          <Tooltip title="Edit">
-            <Button type="text" icon={<EditOutlined />} size="small" />
-          </Tooltip>
-          <Tooltip title="Delete">
-            <Button type="text" icon={<DeleteOutlined />} size="small" danger />
-          </Tooltip>
-        </Space>
-      )
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      width: 140,
+      render: (date) => date ? new Date(date).toLocaleDateString() : ''
     }
   ];
 
@@ -230,71 +193,37 @@ const Dashboard = () => {
   const teamColumns = [
     {
       title: 'Registration ID',
-      dataIndex: 'id',
-      key: 'id',
+      dataIndex: 'teamRegId',
+      key: 'teamRegId',
       width: 120,
       render: (id) => <Tag color="purple">{id}</Tag>
     },
     {
       title: 'Team Name',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'teamName',
+      key: 'teamName',
       width: 150,
       render: (name) => <Text strong>{name}</Text>
     },
     {
-      title: 'School Name',
-      dataIndex: 'schoolName',
-      key: 'schoolName',
-      width: 180
+      title: 'School ID',
+      dataIndex: 'schoolRegId',
+      key: 'schoolRegId',
+      width: 120
     },
     {
       title: 'Event',
       dataIndex: 'event',
       key: 'event',
       width: 140,
-      render: (event) => <Tag color="cyan">{event}</Tag>
+      render: (event) => <Tag color="cyan">{eventCodeMap[event] || event}</Tag>
     },
     {
       title: 'Members',
       dataIndex: 'members',
       key: 'members',
       width: 80,
-      render: (members) => <Tag color="blue">{members}</Tag>
-    },
-    {
-      title: 'Team Leader',
-      dataIndex: 'teamLeader',
-      key: 'teamLeader',
-      width: 140
-    },
-    {
-      title: 'Team Leader Contact',
-      dataIndex: 'teamLeaderContact',
-      key: 'teamLeaderContact',
-      width: 150,
-      render: (contact) => (
-        <Tooltip>
-          <Text copyable={{ text: contact }}>{contact}</Text>
-        </Tooltip>
-      )
-    },
-    {
-      title: 'Coach Name',
-      dataIndex: 'coachName',
-      key: 'coachName',
-      width: 150
-    },
-    {
-      title: 'Coach Contact',
-      dataIndex: 'coachContact',
-      key: 'coachContact',
-      width: 140,
-      render: (contact) => (
-        <Tooltip>
-          <Text copyable={{ text: contact }}>{contact}</Text>
-        </Tooltip>
-      )
+      render: (members) => <Tag color="blue">{members?.length || 0}</Tag>
     },
     {
       title: 'State',
@@ -312,55 +241,52 @@ const Dashboard = () => {
     },
     {
       title: 'Registration Date',
-      dataIndex: 'registrationDate',
-      key: 'registrationDate',
-      width: 140
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      width: 140,
+      render: (date) => date ? new Date(date).toLocaleDateString() : ''
     },
     {
       title: 'Status',
-      dataIndex: 'status',
       key: 'status',
-      width: 100,
-      render: (status) => (
-        <Badge 
-          status={status === 'Active' ? 'success' : status === 'Pending' ? 'processing' : 'default'} 
-          text={status} 
-        />
+      width: 225,
+      render: (_, record) => (
+        <Space wrap>
+          {record.isQualified && <Tag color="green">Qualified</Tag>}
+          {record.submitted && <Tag color="blue">Submitted</Tag>}
+          {record.qualifierPaid && <Tag color="purple">Paid</Tag>}
+        </Space>
       )
     },
     {
       title: 'Actions',
       key: 'actions',
-      width: 120,
+      width: 140,
       fixed: 'right',
       render: (_, record) => (
         <Space>
-          <Tooltip title="View Details">
-            <Button type="text" icon={<EyeOutlined />} size="small" />
-          </Tooltip>
-          <Tooltip title="Edit">
-            <Button type="text" icon={<EditOutlined />} size="small" />
-          </Tooltip>
-          <Tooltip title="Delete">
-            <Button type="text" icon={<DeleteOutlined />} size="small" danger />
-          </Tooltip>
+          {!record.isQualified && (
+            <Popconfirm
+              title="Qualify this team?"
+              onConfirm={async () => {
+                try {
+                  await qualifyTeam(record.teamRegId);
+                  message.success('Team qualified!');
+                  fetchData();
+                } catch {
+                  message.error('Failed to qualify team');
+                }
+              }}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button type="primary" size="small">Qualify</Button>
+            </Popconfirm>
+          )}
         </Space>
       )
     }
   ];
-
-  const handleStateChange = (value) => {
-    setSelectedState(value);
-    setSelectedDistrict(''); // Reset district when state changes
-  };
-
-  const clearFilters = () => {
-    setSearchText('');
-    setSelectedState('');
-    setSelectedDistrict('');
-    setSelectedEvent('');
-    setSelectedStatus('');
-  };
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -402,7 +328,7 @@ const Dashboard = () => {
             <Card>
               <Statistic
                 title={`Filtered ${activeTab === 'schools' ? 'Schools' : 'Teams'}`}
-                value={statistics.filteredCount}
+                value={stats.filtered}
                 valueStyle={{ color: activeTab === 'schools' ? '#1890ff' : '#722ed1' }}
                 prefix={activeTab === 'schools' ? <ReadOutlined /> : <TeamOutlined />}
               />
@@ -412,7 +338,7 @@ const Dashboard = () => {
             <Card>
               <Statistic
                 title="Total Schools"
-                value={statistics.totalSchools}
+                value={activeTab === 'schools' ? stats.total : '-'}
                 valueStyle={{ color: '#1890ff' }}
                 prefix={<ReadOutlined />}
               />
@@ -422,22 +348,24 @@ const Dashboard = () => {
             <Card>
               <Statistic
                 title="Total Teams"
-                value={statistics.totalTeams}
+                value={activeTab === 'teams' ? stats.total : '-'}
                 valueStyle={{ color: '#722ed1' }}
                 prefix={<TeamOutlined />}
               />
             </Card>
           </Col>
-          <Col span={6}>
-            <Card>
-              <Statistic
-                title="Active Registrations"
-                value={activeTab === 'schools' ? statistics.activeSchools : statistics.activeTeams}
-                valueStyle={{ color: '#52c41a' }}
-                prefix={<TrophyOutlined />}
-              />
-            </Card>
-          </Col>
+          {activeTab === 'teams' && (
+            <Col span={6}>
+              <Card>
+                <Statistic
+                  title="Qualified Teams"
+                  value={stats.qualified}
+                  valueStyle={{ color: '#52c41a' }}
+                  prefix={<TrophyOutlined />}
+                />
+              </Card>
+            </Col>
+          )}
         </Row>
 
         {/* Filters */}
@@ -453,7 +381,6 @@ const Dashboard = () => {
                 allowClear
               />
             </div>
-            
             <div className="flex items-center space-x-2">
               <FilterOutlined />
               <Select
@@ -468,7 +395,6 @@ const Dashboard = () => {
                 ))}
               </Select>
             </div>
-
             <Select
               placeholder="Select District"
               value={selectedDistrict}
@@ -481,7 +407,6 @@ const Dashboard = () => {
                 <Option key={district} value={district}>{district}</Option>
               ))}
             </Select>
-
             {activeTab === 'teams' && (
               <Select
                 placeholder="Select Event"
@@ -490,41 +415,41 @@ const Dashboard = () => {
                 style={{ width: 180 }}
                 allowClear
               >
-                {availableEvents.map(event => (
-                  <Option key={event} value={event}>{event}</Option>
+                {Object.entries(eventCodeMap).map(([code, name]) => (
+                  <Option key={code} value={code}>{name}</Option>
                 ))}
               </Select>
             )}
-
-            <Select
-              placeholder="Select Status"
-              value={selectedStatus}
-              onChange={setSelectedStatus}
-              style={{ width: 150 }}
-              allowClear
-            >
-              {(activeTab === 'schools' ? schoolStatusOptions : teamStatusOptions).map(status => (
-                <Option key={status} value={status}>{status}</Option>
-              ))}
-            </Select>
-
+            {activeTab === 'teams' && (
+              <Select
+                placeholder="Select Status"
+                value={selectedStatus}
+                onChange={setSelectedStatus}
+                style={{ width: 150 }}
+                allowClear
+              >
+                <Option value="qualified">Qualified</Option>
+                <Option value="submitted">Submitted</Option>
+                <Option value="paid">Paid</Option>
+              </Select>
+            )}
             <Button onClick={clearFilters} type="default">
               Clear Filters
             </Button>
           </div>
         </Card>
-
         {/* Table */}
         <Card>
           <Table
             columns={activeTab === 'schools' ? schoolColumns : teamColumns}
-            dataSource={filteredData}
-            rowKey="id"
+            dataSource={data}
+            rowKey={record => record.teamRegId || record.schoolRegId || record._id}
+            loading={loading}
             pagination={{
               pageSize: 10,
               showSizeChanger: true,
               showQuickJumper: true,
-              showTotal: (total, range) => 
+              showTotal: (total, range) =>
                 `${range[0]}-${range[1]} of ${total} ${activeTab === 'schools' ? 'schools' : 'teams'}`
             }}
             scroll={{ x: 1400 }}

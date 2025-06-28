@@ -44,4 +44,13 @@ api.interceptors.response.use(
     }
 );
 
+// Schools
+export const fetchSchools = (params) => api.get('/school/list', { params });
+export const fetchSchoolStats = (params) => api.get('/school/stats', { params });
+
+// Teams
+export const fetchTeams = (params) => api.get('/team/list', { params });
+export const fetchTeamStats = (params) => api.get('/team/stats', { params });
+export const qualifyTeam = (teamRegId) => api.patch(`/team/qualify/${teamRegId}`);
+
 export default api;
