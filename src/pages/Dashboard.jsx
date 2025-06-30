@@ -199,13 +199,6 @@ const Dashboard = () => {
       render: (id) => <Tag color="purple">{id}</Tag>
     },
     {
-      title: 'Team Name',
-      dataIndex: 'teamName',
-      key: 'teamName',
-      width: 150,
-      render: (name) => <Text strong>{name}</Text>
-    },
-    {
       title: 'School ID',
       dataIndex: 'schoolRegId',
       key: 'schoolRegId',

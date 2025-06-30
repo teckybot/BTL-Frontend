@@ -6,7 +6,6 @@ const TeamPreview = ({ team, onNext }) => {
     <Card title="Team Details Preview" bordered={true}>
       <Descriptions column={1} bordered size="small">
         <Descriptions.Item label="Team ID">{team.teamRegId}</Descriptions.Item>
-        <Descriptions.Item label="Team Name">{team.teamName}</Descriptions.Item>
         <Descriptions.Item label="Event">{team.event}</Descriptions.Item>
         <Descriptions.Item label="Team Size">{team.teamSize}</Descriptions.Item>
         <Descriptions.Item label="State">{team.state}</Descriptions.Item>

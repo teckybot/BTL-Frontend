@@ -118,7 +118,12 @@ const QualifierStepper = () => {
         rules={[{ required: true, message: 'Class required' }]}
         initialValue={member.classGrade}
       >
-        <Input placeholder="Enter class/grade" />
+        <Select placeholder="Select class/grade">
+          <Select.Option value="6">6</Select.Option>
+          <Select.Option value="7">7</Select.Option>
+          <Select.Option value="8">8</Select.Option>
+          <Select.Option value="9">9</Select.Option>
+        </Select>
       </Form.Item>
       <Form.Item
         name={['members', idx, 'gender']}
@@ -151,7 +156,7 @@ const QualifierStepper = () => {
       title: 'Payment',
       content: loading ? <Spin /> : (
         <div>
-          <h3>Team: {team?.teamName}</h3>
+          {/* <h3>Team: {team?.teamName}</h3> */}
           <p>Team Size: {team?.members?.length}</p>
           <p>Fee: <b>₹{team?.members?.length ? team.members.length * 499 : 0}</b></p>
           <Button type="primary" onClick={handlePayment} loading={paying} disabled={!team} style={{ marginTop: 16 }}>

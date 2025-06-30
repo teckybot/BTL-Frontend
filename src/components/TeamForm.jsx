@@ -132,7 +132,6 @@ const TeamForm = ({ schoolRegId }) => {
       // Create payload exactly matching backend requirements
       const payload = {
         schoolRegId,
-        teamName: values.teamName,
         teamSize: parseInt(values.teamSize),
         members: values.members,
         event: eventValue,
@@ -166,15 +165,6 @@ const TeamForm = ({ schoolRegId }) => {
       title: 'Team Details',
       content: (
         <>
-          <Form.Item
-            name="teamName"
-            label="Team Name"
-            rules={[{ required: true, message: 'Please input team name!' }]}
-          >
-            <Input placeholder='Enter team name' />
-          </Form.Item>
-
-
           <Form.Item
             name="event"
             label="Event Category"
@@ -260,7 +250,12 @@ const TeamForm = ({ schoolRegId }) => {
                     fieldKey={[field.fieldKey, 'classGrade']}
                     rules={[{ required: true, message: 'Please input grade/class!' }]}
                   >
-                    <Input placeholder="Enter grade/class" />
+                    <Select placeholder="Select grade/class">
+                      <Select.Option value="6">6</Select.Option>
+                      <Select.Option value="7">7</Select.Option>
+                      <Select.Option value="8">8</Select.Option>
+                      <Select.Option value="9">9</Select.Option>
+                    </Select>
                   </Form.Item>
 
                   <Form.Item
