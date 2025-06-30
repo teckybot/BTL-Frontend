@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
 
@@ -29,6 +29,16 @@ const CheckpointPage = () => {
     }
   };
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      // No logging or action for keydown except what is handled in input
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   return (
     <div className="p-4 max-w-md mx-auto">
       <h2 className="text-xl font-bold mb-4">Team Registration Checkpoint</h2>
@@ -38,6 +48,7 @@ const CheckpointPage = () => {
           placeholder="Enter School Registration ID"
           value={schoolRegId}
           onChange={(e) => setSchoolRegId(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') handleCheck(); }}
           className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
         <button

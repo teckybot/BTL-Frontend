@@ -1,5 +1,5 @@
 // src/App.jsx
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import StepperForm from './components/StepperForm';
@@ -14,6 +14,9 @@ import VideoConfirmation from './pages/VideoConfirmation';
 import QualifierCheckpointPage from './pages/Qualifier/CheckpointPage';
 import QualifierStepper from './pages/Qualifier/QualifierStepper';
 import QualifierSuccess from './pages/Qualifier/QualifierSuccess';
+
+import { useEffect, useCallback } from 'react';
+
 
 function App() {
   return (

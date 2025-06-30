@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input, Button, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import api from "../../utils/api";
@@ -22,6 +22,16 @@ const CheckpointForm = () => {
     }
   };
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      // No logging or action for keydown except what is handled in input
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   return (
     <div style={{ maxWidth: 400, margin: "50px auto" }}>
       <h3>Enter Team Registration ID</h3>
@@ -30,6 +40,7 @@ const CheckpointForm = () => {
         value={teamId}
         onChange={(e) => setTeamId(e.target.value)}
         style={{ marginBottom: 16 }}
+        onKeyDown={(e) => { if (e.key === 'Enter') handleCheck(); }}
       />
       <Button type="primary" onClick={handleCheck}>Verify</Button>
     </div>

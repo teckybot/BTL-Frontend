@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Input, Button, Alert, Spin } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api'
@@ -27,6 +27,16 @@ const QualifierCheckpointPage = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      // No logging or action for keydown except what is handled in input
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   return (
     <Card title="Qualifier Registration Checkpoint" style={{ maxWidth: 400, margin: '2rem auto' }}>
