@@ -2,18 +2,25 @@ import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
 import { Button } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import confetti from "canvas-confetti";
 
 const TeamRegistrationSuccess = () => {
-  const teamRegId = sessionStorage.getItem("teamRegId");
+  const location = useLocation();
+  const registeredTeams = location.state?.registeredTeams || [];
+  console.log('Registered teams:', registeredTeams);
 
   const handleDownloadPDF = () => {
-    if (!teamRegId) {
-      alert("Missing Team ID. Please check your email.");
+    if (!registeredTeams.length) {
+      alert("No team registration details available to download.");
       return;
     }
-    const url = `${import.meta.env.VITE_API_BASE_URL}/team/pdf/${teamRegId}`;
+    const team = registeredTeams[0]; // Assuming the first registered team is the one to download
+    if (!team.teamRegId) {
+      alert("Missing Team ID for the first registered team. Please check your email.");
+      return;
+    }
+    const url = `${import.meta.env.VITE_API_BASE_URL}/team/pdf/${team.teamRegId}`;
     window.open(url, "_blank");
   };
 
@@ -50,14 +57,23 @@ const TeamRegistrationSuccess = () => {
           Your team has been successfully registered for <strong>Bharat Tech League 2025</strong>.
         </p>
 
-        <div className="my-6">
-          <p className="text-gray-800 text-xl font-semibold">
-            Your Team ID is:
-          </p>
-          <p className="text-blue-700 bg-blue-100 inline-block px-4 py-1 mt-1 rounded-md font-mono text-lg tracking-wide">
-            {teamRegId || 'N/A'}
-          </p>
-        </div>
+        {registeredTeams.length > 0 ? (
+          <div className="my-6">
+            <p className="text-gray-800 text-xl font-semibold mb-2">
+              Registered Team IDs:
+            </p>
+            <ul className="flex flex-wrap justify-center gap-4">
+              {registeredTeams.map((team, idx) => (
+                <li key={team.teamRegId || idx} className="bg-blue-100 px-4 py-2 rounded-md font-mono text-lg tracking-wide text-blue-700 flex flex-col items-center">
+                  <span className="font-semibold text-xs text-gray-500 mb-1">Team {team.teamNumber || idx + 1}</span>
+                  <span>{team.teamRegId ? team.teamRegId : 'N/A'}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div className="my-6 text-gray-600">No team details available.</div>
+        )}
 
         <p className="text-gray-600 mb-6">
           A confirmation email has been sent to the coordinator's email. You can also download your team registration details below.

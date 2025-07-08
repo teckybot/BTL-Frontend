@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Steps, Card, Button, Form, Input, Select, message, Spin } from 'antd';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../utils/api';

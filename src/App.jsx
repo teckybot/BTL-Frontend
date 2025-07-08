@@ -14,13 +14,16 @@ import VideoConfirmation from './pages/VideoConfirmation';
 import QualifierCheckpointPage from './pages/Qualifier/CheckpointPage';
 import QualifierStepper from './pages/Qualifier/QualifierStepper';
 import QualifierSuccess from './pages/Qualifier/QualifierSuccess';
+import { TeamDraftProvider } from './context/TeamDraftContext';
+import TeamModulesPage from './pages/TeamModulesPage';
+import TeamForm from './components/TeamForm';
 
 import { useEffect, useCallback } from 'react';
 
 
 function App() {
   return (
-    <>
+    <TeamDraftProvider>
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -36,8 +39,10 @@ function App() {
         <Route path="/qualifier" element={<QualifierCheckpointPage />} />
         <Route path="/qualifier/:teamId/register" element={<QualifierStepper />} />
         <Route path="/qualifier/:teamId/success" element={<QualifierSuccess />} />
+        <Route path="/modules" element={<TeamModulesPage />} />
+        <Route path="/team-form/:teamNumber" element={<TeamForm />} />
       </Routes>
-    </>
+    </TeamDraftProvider>
   );
 }
 
