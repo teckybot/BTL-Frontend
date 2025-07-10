@@ -1,27 +1,56 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
-import { Button } from "antd";
+import { Button, message } from "antd"; // Assuming Ant Design Button and message
 import { Link, useLocation } from "react-router-dom";
 import confetti from "canvas-confetti";
 
 const TeamRegistrationSuccess = () => {
   const location = useLocation();
   const registeredTeams = location.state?.registeredTeams || [];
+  const pdfBase64 = location.state?.pdfBase64 || null; // <--- Get pdfBase64 from state
+  const pdfFileName = location.state?.pdfFileName || "Team_Registration_Details.pdf"; // <--- Get pdfFileName from state
+
   console.log('Registered teams:', registeredTeams);
+  console.log('PDF Base64 received:', pdfBase64 ? 'Yes' : 'No');
+  console.log('PDF File Name received:', pdfFileName);
+
 
   const handleDownloadPDF = () => {
-    if (!registeredTeams.length) {
-      alert("No team registration details available to download.");
-      return;
+    // Check if pdfBase64 is available in state
+    if (pdfBase64) {
+      // Decode base64 to a binary string
+      const byteCharacters = atob(pdfBase64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+      // Create a link element, set its href to the Blob URL, and click it to trigger download
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = pdfFileName; // Use the provided filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href); // Clean up the Blob URL
+
+      message.success("Registration details PDF downloaded successfully!");
+    } else {
+      // Fallback or alert if PDF data is not available
+      message.error("No PDF details available for download. Please check your email for confirmation.");
+      // You could optionally keep the old download logic here if you still have a single-team PDF endpoint
+      // OR direct them to check email / contact support.
+      // E.g., if you still want the single team download as a fallback:
+      // if (registeredTeams.length > 0 && registeredTeams[0].teamRegId) {
+      //   const team = registeredTeams[0];
+      //   const url = `${import.meta.env.VITE_API_BASE_URL}/team/pdf/${team.teamRegId}`;
+      //   window.open(url, "_blank");
+      //   message.info("Attempting to download individual team PDF as a fallback.");
+      // }
     }
-    const team = registeredTeams[0]; // Assuming the first registered team is the one to download
-    if (!team.teamRegId) {
-      alert("Missing Team ID for the first registered team. Please check your email.");
-      return;
-    }
-    const url = `${import.meta.env.VITE_API_BASE_URL}/team/pdf/${team.teamRegId}`;
-    window.open(url, "_blank");
   };
 
   useEffect(() => {
@@ -30,7 +59,14 @@ const TeamRegistrationSuccess = () => {
       spread: 80,
       origin: { y: 0.6 },
     });
-  }, []);
+    message.success("Email confirmation has been sent to school and coordinator.");
+
+    // Optional: Auto-download the PDF on success page load
+    // if (pdfBase64) {
+    //   handleDownloadPDF();
+    // }
+
+  }, []); // Empty dependency array means this runs once on mount
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-blue-50 to-blue-100 flex items-center justify-center px-4">
@@ -93,6 +129,8 @@ const TeamRegistrationSuccess = () => {
             type="primary"
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded"
             onClick={handleDownloadPDF}
+            // Optional: Disable button if no PDF data is available
+            // disabled={!pdfBase64}
           >
             Download Registration Details
           </Button>

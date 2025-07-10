@@ -1,6 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TeamDraftContext } from "../context/TeamDraftContext";
+import { message } from "antd";
 import api from "../utils/api";
 
 const TeamModulesPage = () => {
@@ -53,6 +54,7 @@ const TeamModulesPage = () => {
     if (!submitted) navigate(`/team-form/${teamNumber}`);
   };
 
+  // Always use string keys for draft.teams lookup to avoid type mismatch
   // Compute which blocks are registered and which are draft
   const registeredTeamNumbers = registeredTeams.map(t => t.teamNumber);
 
@@ -86,6 +88,8 @@ const TeamModulesPage = () => {
         navigate("/teamRegistration-success", {
           state: {
             registeredTeams: res.data.teams || [],
+            pdfBase64: res.data.pdfBase64,      // <-- add this
+            pdfFileName: res.data.pdfFileName,  // <-- and this
           },
         });
       } else {
@@ -115,7 +119,7 @@ const TeamModulesPage = () => {
         {[...Array(10)].map((_, idx) => {
           const teamNum = idx + 1;
           const registered = registeredTeamNumbers.includes(teamNum);
-          const filled = !!draft.teams[teamNum] && !registered;
+          const filled = !!draft.teams[String(teamNum)] && !registered;
           return (
             <div
               key={teamNum}

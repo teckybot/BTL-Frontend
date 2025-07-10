@@ -23,7 +23,7 @@ const TeamForm = () => {
       setFormData(draft.teams[teamNumber]);
       setSelectedEvent(draft.teams[teamNumber].event);
       form.setFieldsValue(draft.teams[teamNumber]);
-    }
+      }
   }, [draft.teams, teamNumber, form]);
 
   const handleEventChange = (value) => {
