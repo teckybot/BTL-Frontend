@@ -28,6 +28,8 @@ import {
   TrophyOutlined,
   CheckCircleTwoTone
 } from '@ant-design/icons';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 import { stateDistrictCodeMap } from '../data/stateDistrictMap';
 import { eventCodeMap } from '../data/mockData';
 import {
@@ -35,7 +37,9 @@ import {
   fetchSchoolStats,
   fetchTeams,
   fetchTeamStats,
-  qualifyTeam
+  qualifyTeam,
+  fetchAllSchools,
+  fetchAllTeams
 } from '../utils/api';
 
 const { Title, Text } = Typography;
@@ -68,17 +72,28 @@ const Dashboard = () => {
           fetchSchools(params),
           fetchSchoolStats(params)
         ]);
-        setData(listRes.data);
+
+        // Sort by newest registration date first
+        const schoolsArray = Array.isArray(listRes.data) ? listRes.data : listRes.data.data;
+        const sortedSchools = schoolsArray.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setData(sortedSchools);
         setStats(statsRes.data);
+
       } else {
         const [listRes, statsRes] = await Promise.all([
           fetchTeams(params),
           fetchTeamStats(params)
         ]);
-        setData(listRes.data);
+
+        // Sort by newest registration date first
+        const teamsArray = Array.isArray(listRes.data) ? listRes.data : listRes.data.data;
+        const sortedTeams = teamsArray.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setData(sortedTeams);
+        setData(sortedTeams);
         setStats(statsRes.data);
       }
     } catch (err) {
+      console.error('Fetch error:', err);
       message.error('Failed to fetch data');
     } finally {
       setLoading(false);
@@ -281,6 +296,71 @@ const Dashboard = () => {
     }
   ];
 
+  const exportToExcel = async () => {
+    try {
+      const params = {
+        state: selectedState,
+        district: selectedDistrict,
+        event: activeTab === 'teams' ? selectedEvent : undefined,
+        status: activeTab === 'teams' ? selectedStatus : undefined,
+        search: searchText
+      };
+
+      let fullData = [];
+      if (activeTab === 'schools') {
+        const res = await fetchAllSchools(params);
+        fullData = Array.isArray(res.data) ? res.data : res.data.data;
+      } else {
+        const res = await fetchAllTeams(params);
+        fullData = Array.isArray(res.data) ? res.data : res.data.data;
+      }
+
+      const exportData = fullData.map(item => {
+        if (activeTab === 'schools') {
+          return {
+            'Registration ID': item.schoolRegId,
+            'School Name': item.schoolName,
+            'School Email': item.schoolEmail,
+            'School Contact': item.schoolContact,
+            'Coordinator Name': item.coordinatorName,
+            'Coordinator Contact': item.coordinatorNumber,
+            State: item.state,
+            District: item.district,
+            'Registration Date': item.createdAt ? new Date(item.createdAt).toLocaleDateString() : ''
+          };
+        } else {
+          return {
+            'Registration ID': item.teamRegId,
+            'School ID': item.schoolRegId,
+            Event: eventCodeMap[item.event] || item.event,
+            Members: item.members?.length || 0,
+            State: item.state,
+            District: item.district,
+            'Registration Date': item.createdAt ? new Date(item.createdAt).toLocaleDateString() : '',
+            Status: [
+              item.isQualified ? 'Qualified' : '',
+              item.submitted ? 'Submitted' : '',
+              item.qualifierPaid ? 'Paid' : ''
+            ].filter(Boolean).join(', ')
+          };
+        }
+      });
+
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, activeTab === 'schools' ? 'Schools' : 'Teams');
+
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+      saveAs(blob, `${activeTab === 'schools' ? 'Schools' : 'Teams'}_Export.xlsx`);
+    } catch (error) {
+      console.error('Export failed', error);
+      message.error('Failed to export data');
+    }
+  };
+
+
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto">
@@ -363,74 +443,85 @@ const Dashboard = () => {
 
         {/* Filters */}
         <Card className="mb-6">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center space-x-2">
-              <SearchOutlined />
-              <Input
-                placeholder={`Search ${activeTab === 'schools' ? 'schools' : 'teams'}...`}
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                style={{ width: 250 }}
-                allowClear
-              />
-            </div>
-            <div className="flex items-center space-x-2">
-              <FilterOutlined />
+          <div className="flex flex-wrap justify-between items-center gap-4">
+            {/* Left: Filters */}
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center space-x-2">
+                <SearchOutlined />
+                <Input
+                  placeholder={`Search ${activeTab === 'schools' ? 'schools' : 'teams'}...`}
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  style={{ width: 250 }}
+                  allowClear
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <FilterOutlined />
+                <Select
+                  placeholder="Select State"
+                  value={selectedState}
+                  onChange={handleStateChange}
+                  style={{ width: 180 }}
+                  allowClear
+                >
+                  {Object.keys(stateDistrictCodeMap).map(state => (
+                    <Option key={state} value={state}>{state}</Option>
+                  ))}
+                </Select>
+              </div>
               <Select
-                placeholder="Select State"
-                value={selectedState}
-                onChange={handleStateChange}
+                placeholder="Select District"
+                value={selectedDistrict}
+                onChange={setSelectedDistrict}
                 style={{ width: 180 }}
                 allowClear
+                disabled={!selectedState}
               >
-                {Object.keys(stateDistrictCodeMap).map(state => (
-                  <Option key={state} value={state}>{state}</Option>
+                {availableDistricts.map(district => (
+                  <Option key={district} value={district}>{district}</Option>
                 ))}
               </Select>
+              {activeTab === 'teams' && (
+                <Select
+                  placeholder="Select Event"
+                  value={selectedEvent}
+                  onChange={setSelectedEvent}
+                  style={{ width: 180 }}
+                  allowClear
+                >
+                  {Object.entries(eventCodeMap).map(([code, name]) => (
+                    <Option key={code} value={code}>{name}</Option>
+                  ))}
+                </Select>
+              )}
+              {activeTab === 'teams' && (
+                <Select
+                  placeholder="Select Status"
+                  value={selectedStatus}
+                  onChange={setSelectedStatus}
+                  style={{ width: 150 }}
+                  allowClear
+                >
+                  <Option value="qualified">Qualified</Option>
+                  <Option value="submitted">Submitted</Option>
+                  <Option value="paid">Paid</Option>
+                </Select>
+              )}
+              <Button onClick={clearFilters} type="default">
+                Clear Filters
+              </Button>
             </div>
-            <Select
-              placeholder="Select District"
-              value={selectedDistrict}
-              onChange={setSelectedDistrict}
-              style={{ width: 180 }}
-              allowClear
-              disabled={!selectedState}
-            >
-              {availableDistricts.map(district => (
-                <Option key={district} value={district}>{district}</Option>
-              ))}
-            </Select>
-            {activeTab === 'teams' && (
-              <Select
-                placeholder="Select Event"
-                value={selectedEvent}
-                onChange={setSelectedEvent}
-                style={{ width: 180 }}
-                allowClear
-              >
-                {Object.entries(eventCodeMap).map(([code, name]) => (
-                  <Option key={code} value={code}>{name}</Option>
-                ))}
-              </Select>
-            )}
-            {activeTab === 'teams' && (
-              <Select
-                placeholder="Select Status"
-                value={selectedStatus}
-                onChange={setSelectedStatus}
-                style={{ width: 150 }}
-                allowClear
-              >
-                <Option value="qualified">Qualified</Option>
-                <Option value="submitted">Submitted</Option>
-                <Option value="paid">Paid</Option>
-              </Select>
-            )}
-            <Button onClick={clearFilters} type="default">
-              Clear Filters
-            </Button>
+
+            {/* Right: Excel Export */}
+            <div>
+              <Button type="primary" onClick={exportToExcel}>
+                Download Excel
+              </Button>
+            </div>
           </div>
         </Card>
+
         {/* Table */}
         <Card>
           <Table

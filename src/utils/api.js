@@ -45,12 +45,18 @@ api.interceptors.response.use(
 );
 
 // Schools
+// Paginated for dashboard only the first one
 export const fetchSchools = (params) => api.get('/school/list', { params });
 export const fetchSchoolStats = (params) => api.get('/school/stats', { params });
 
 // Teams
+// Paginated for dashboard only the first one
 export const fetchTeams = (params) => api.get('/team/list', { params });
 export const fetchTeamStats = (params) => api.get('/team/stats', { params });
 export const qualifyTeam = (teamRegId) => api.patch(`/team/qualify/${teamRegId}`);
+
+// Full export versions
+export const fetchAllSchools = (params) => api.get('/school/list/all', { params });
+export const fetchAllTeams = (params) => api.get('/team/list/all', { params });
 
 export default api;
