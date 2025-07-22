@@ -17,7 +17,7 @@ import QualifierSuccess from './pages/Qualifier/QualifierSuccess';
 import { TeamDraftProvider } from './context/TeamDraftContext';
 import TeamModulesPage from './pages/TeamModulesPage';
 import TeamForm from './components/TeamForm';
-
+import AIWorkshopDashboard from './pages/AIWorkshopDashboard';
 import { useEffect, useCallback } from 'react';
 
 
@@ -41,6 +41,7 @@ function App() {
         <Route path="/qualifier/:teamId/success" element={<QualifierSuccess />} />
         <Route path="/modules" element={<TeamModulesPage />} />
         <Route path="/team-form/:teamNumber" element={<TeamForm />} />
+        <Route path="/ai-workshop-dashboard" element={<AIWorkshopDashboard />} />
       </Routes>
     </TeamDraftProvider>
   );
