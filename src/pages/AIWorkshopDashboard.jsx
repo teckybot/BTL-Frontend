@@ -155,7 +155,7 @@ const AIWorkshopDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-blue-100 p-4 pt-24">
+    <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-blue-100 p-4 pt-2">
       <div className="max-w-full mx-auto bg-white rounded-2xl shadow-xl p-4 sm:p-8">
         <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center text-blue-900">AI Workshop Registrations Dashboard</h1>
         <Table
