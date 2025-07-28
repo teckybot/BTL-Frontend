@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Popconfirm, message, Tag } from 'antd';
+import { Table, Button, Popconfirm, message, Tag, Input } from 'antd';
 import api from '../utils/api';
+
+const { Search } = Input;
 
 const AIWorkshopDashboard = () => {
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState({});
+  const [searchText, setSearchText] = useState('');
 
   const fetchData = async () => {
     setLoading(true);
     try {
       const res = await api.get('/ai-workshop/all');
       setData(res.data);
+      setFilteredData(res.data); // initialize filtered list
     } catch (err) {
       message.error('Failed to fetch registrations');
     } finally {
@@ -28,7 +33,9 @@ const AIWorkshopDashboard = () => {
     try {
       await api.delete(`/ai-workshop/${registrationId}`);
       message.success('Registration deleted');
-      setData((prev) => prev.filter((r) => r.registrationId !== registrationId));
+      const updated = data.filter((r) => r.registrationId !== registrationId);
+      setData(updated);
+      setFilteredData(updated);
     } catch (err) {
       message.error('Failed to delete registration');
     } finally {
@@ -41,7 +48,11 @@ const AIWorkshopDashboard = () => {
     try {
       await api.patch(`/ai-workshop/${registrationId}/mark-paid`);
       message.success('Marked as paid');
-      setData((prev) => prev.map((r) => r.registrationId === registrationId ? { ...r, paid: true } : r));
+      const updated = data.map((r) =>
+        r.registrationId === registrationId ? { ...r, paid: true } : r
+      );
+      setData(updated);
+      setFilteredData(updated);
     } catch (err) {
       message.error('Failed to update status');
     } finally {
@@ -66,6 +77,17 @@ const AIWorkshopDashboard = () => {
     } catch (error) {
       message.error('Failed to download PDF');
     }
+  };
+
+  // Handle search across Name, Email, and School
+  const handleSearch = (value) => {
+    setSearchText(value);
+    const filtered = data.filter((item) =>
+      [item.name, item.email, item.school].some((field) =>
+        field.toLowerCase().includes(value.toLowerCase())
+      )
+    );
+    setFilteredData(filtered);
   };
 
   const columns = [
@@ -140,7 +162,6 @@ const AIWorkshopDashboard = () => {
               </Button>
             </Popconfirm>
           )}
-
           {record.paid && (
             <Button
               size="small"
@@ -157,10 +178,29 @@ const AIWorkshopDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-blue-100 p-4 pt-2">
       <div className="max-w-full mx-auto bg-white rounded-2xl shadow-xl p-4 sm:p-8">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center text-blue-900">AI Workshop Registrations Dashboard</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center text-blue-900">
+          AI Workshop Registrations Dashboard
+        </h1>
+
+        {/* Total Count & Search Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
+          <div className="text-lg font-semibold text-gray-700">
+            Total Registrations: <span className="text-blue-700">{filteredData.length}</span>
+          </div>
+          <Search
+            placeholder="Search by name, email, or school"
+            onSearch={handleSearch}
+            onChange={(e) => handleSearch(e.target.value)}
+            value={searchText}
+            enterButton
+            allowClear
+            className="max-w-xs"
+          />
+        </div>
+
         <Table
           columns={columns}
-          dataSource={data}
+          dataSource={filteredData}
           rowKey="registrationId"
           loading={loading}
           pagination={{ pageSize: 10 }}
@@ -172,4 +212,4 @@ const AIWorkshopDashboard = () => {
   );
 };
 
-export default AIWorkshopDashboard; 
+export default AIWorkshopDashboard;
