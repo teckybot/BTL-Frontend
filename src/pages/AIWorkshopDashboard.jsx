@@ -58,7 +58,7 @@ const AIWorkshopDashboard = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `AI_Workshop_Registration_${registrationId}.pdf`;
+      link.download = `${registrationId}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

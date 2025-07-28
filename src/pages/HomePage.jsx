@@ -17,11 +17,11 @@ export default function HomePage() {
       <div className="flex justify-center gap-6">
         {/* <Link to="/school-registration" className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition">
           Register Your School
-        </Link>
-        <Link to="/team-checkpoint" className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition">
+        </Link> */}
+        {/* <Link to="/team-checkpoint" className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition">
           Register Your Team
-        </Link>
-        <Link to="/qualifier" className="bg-purple-600 text-white px-6 py-3 rounded-md hover:bg-purple-700 transition">
+        </Link> */}
+        {/* <Link to="/qualifier" className="bg-purple-600 text-white px-6 py-3 rounded-md hover:bg-purple-700 transition">
           Qualifier Registration
         </Link> */}
         
