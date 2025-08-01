@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Popconfirm, message, Tag, Input } from 'antd';
 import api from '../utils/api';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const { Search } = Input;
 
@@ -23,6 +25,15 @@ const AIWorkshopDashboard = () => {
       setLoading(false);
     }
   };
+  const handleDownloadExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(filteredData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Registrations');
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(blob, 'ai_workshop_registrations.xlsx');
+  };
+
 
   useEffect(() => {
     fetchData();
@@ -194,9 +205,14 @@ const AIWorkshopDashboard = () => {
             value={searchText}
             enterButton
             allowClear
-            className="max-w-xs"
+            className="max-w-md"
           />
+          <Button type="primary" onClick={handleDownloadExcel}>
+          Download Excel
+        </Button>
         </div>
+        
+
 
         <Table
           columns={columns}
@@ -213,4 +229,3 @@ const AIWorkshopDashboard = () => {
 };
 
 export default AIWorkshopDashboard;
-  
