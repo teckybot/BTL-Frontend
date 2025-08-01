@@ -26,13 +26,25 @@ const AIWorkshopDashboard = () => {
     }
   };
   const handleDownloadExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(filteredData);
+    // Define what columns you want to export (like your dashboard)
+    const exportData = filteredData.map((item) => ({
+      'Registration ID': item.registrationId,
+      'Name': item.name,
+      'Email': item.email,
+      'Contact': item.contact,
+      'School': item.school,
+      'Paid': item.paid ? 'Yes' : 'No'
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Registrations');
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Dashboard Data');
+
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    saveAs(blob, 'ai_workshop_registrations.xlsx');
+    saveAs(blob, 'ai_workshop_dashboard.xlsx');
   };
+
 
 
   useEffect(() => {
@@ -208,10 +220,10 @@ const AIWorkshopDashboard = () => {
             className="max-w-md"
           />
           <Button type="primary" onClick={handleDownloadExcel}>
-          Download Excel
-        </Button>
+            Download Excel
+          </Button>
         </div>
-        
+
 
 
         <Table
