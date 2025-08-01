@@ -42,7 +42,7 @@ const AIWorkshopDashboard = () => {
 
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    saveAs(blob, 'ai_workshop_dashboard.xlsx');
+    saveAs(blob, 'ai_workshop_registrations.xlsx');
   };
 
 
