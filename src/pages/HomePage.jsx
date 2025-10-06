@@ -25,9 +25,9 @@ export default function HomePage() {
           Qualifier Registration
         </Link> */}
         
-        <Link to="/ai-workshop-dashboard" className="bg-purple-600 text-white px-6 py-3 rounded-md hover:bg-purple-700 transition">
+        {/* <Link to="/ai-workshop-dashboard" className="bg-purple-600 text-white px-6 py-3 rounded-md hover:bg-purple-700 transition">
           AI Workshop Dashboard
-        </Link>
+        </Link> */}
         
         <Link to="/dashboard" className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition">
            BTL Registration Dashboard
