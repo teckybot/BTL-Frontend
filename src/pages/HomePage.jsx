@@ -5,10 +5,9 @@ import { Link } from 'react-router-dom';
 export default function HomePage() {
   return (
     <div className="max-w-4xl mx-auto text-center py-16 px-4">
-      <h1 className="text-4xl font-bold mb-4 text-blue-700">Welcome to Bharat Teck League</h1>
+      <h1 className="text-4xl font-bold mb-4 text-blue-700">BTL Admin Dashboard</h1>
       <p className="mb-8 text-lg text-gray-700">
-        Join the biggest tech event of the year! Register your school and teams to showcase your skills and compete with the best.
-      </p>
+Monitor school registrations, review team submissions, and manage participation data for the Bharat Teck League.      </p>
       {/* <img 
         src="/event-poster.png" 
         alt="Bharat Tech League Event Poster" 
