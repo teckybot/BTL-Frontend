@@ -55,6 +55,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [stats, setStats] = useState({ total: 0, active: 0, qualified: 0, filtered: 0 });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   // Fetch data and stats
   const fetchData = async () => {
@@ -65,7 +67,9 @@ const Dashboard = () => {
         district: selectedDistrict,
         event: activeTab === 'teams' ? selectedEvent : undefined,
         status: activeTab === 'teams' ? selectedStatus : undefined,
-        search: searchText
+        search: searchText,
+        page: currentPage,
+        limit: pageSize
       };
       if (activeTab === 'schools') {
         const [listRes, statsRes] = await Promise.all([
@@ -103,7 +107,7 @@ const Dashboard = () => {
   useEffect(() => {
     fetchData();
     // eslint-disable-next-line
-  }, [activeTab, searchText, selectedState, selectedDistrict, selectedEvent, selectedStatus]);
+  }, [activeTab, searchText, selectedState, selectedDistrict, selectedEvent, selectedStatus, currentPage, pageSize]);
 
   // Get available districts based on selected state
   const availableDistricts = useMemo(() => {
@@ -116,6 +120,7 @@ const Dashboard = () => {
   const handleStateChange = (value) => {
     setSelectedState(value);
     setSelectedDistrict('');
+    setCurrentPage(1);
   };
 
   const clearFilters = () => {
@@ -124,6 +129,14 @@ const Dashboard = () => {
     setSelectedDistrict('');
     setSelectedEvent('');
     setSelectedStatus('');
+    setCurrentPage(1);
+  };
+
+  const handleTableChange = (pagination) => {
+    const { current, pageSize: nextPageSize } = pagination;
+    const pageSizeChanged = nextPageSize !== pageSize;
+    setPageSize(nextPageSize);
+    setCurrentPage(pageSizeChanged ? 1 : current);
   };
 
   // School table columns
@@ -381,7 +394,10 @@ const Dashboard = () => {
               <Text strong>View Mode:</Text>
               <Switch
                 checked={activeTab === 'teams'}
-                onChange={(checked) => setActiveTab(checked ? 'teams' : 'schools')}
+                onChange={(checked) => {
+                  setActiveTab(checked ? 'teams' : 'schools');
+                  setCurrentPage(1);
+                }}
                 checkedChildren={<><TeamOutlined /> Teams</>}
                 unCheckedChildren={<><ReadOutlined /> Schools</>}
               />
@@ -451,7 +467,10 @@ const Dashboard = () => {
                 <Input
                   placeholder={`Search ${activeTab === 'schools' ? 'schools' : 'teams'}...`}
                   value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
+                  onChange={(e) => {
+                    setSearchText(e.target.value);
+                    setCurrentPage(1);
+                  }}
                   style={{ width: 250 }}
                   allowClear
                 />
@@ -473,7 +492,10 @@ const Dashboard = () => {
               <Select
                 placeholder="Select District"
                 value={selectedDistrict}
-                onChange={setSelectedDistrict}
+                onChange={(value) => {
+                  setSelectedDistrict(value);
+                  setCurrentPage(1);
+                }}
                 style={{ width: 180 }}
                 allowClear
                 disabled={!selectedState}
@@ -486,7 +508,10 @@ const Dashboard = () => {
                 <Select
                   placeholder="Select Event"
                   value={selectedEvent}
-                  onChange={setSelectedEvent}
+                  onChange={(value) => {
+                    setSelectedEvent(value);
+                    setCurrentPage(1);
+                  }}
                   style={{ width: 180 }}
                   allowClear
                 >
@@ -499,7 +524,10 @@ const Dashboard = () => {
                 <Select
                   placeholder="Select Status"
                   value={selectedStatus}
-                  onChange={setSelectedStatus}
+                  onChange={(value) => {
+                    setSelectedStatus(value);
+                    setCurrentPage(1);
+                  }}
                   style={{ width: 150 }}
                   allowClear
                 >
@@ -530,12 +558,15 @@ const Dashboard = () => {
             rowKey={record => record.teamRegId || record.schoolRegId || record._id}
             loading={loading}
             pagination={{
-              pageSize: 10,
+              current: currentPage,
+              pageSize: pageSize,
+              total: stats.filtered || stats.total || 0,
               showSizeChanger: true,
               showQuickJumper: true,
               showTotal: (total, range) =>
                 `${range[0]}-${range[1]} of ${total} ${activeTab === 'schools' ? 'schools' : 'teams'}`
             }}
+            onChange={handleTableChange}
             scroll={{ x: 1400 }}
             size="middle"
             bordered
